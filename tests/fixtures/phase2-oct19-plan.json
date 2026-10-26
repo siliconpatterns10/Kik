@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "meeting": {
+    "id": "cmveqh61m08akc92wck8c339s",
+    "title": "Daily Leadership connect",
+    "date": "2026-10-19",
+    "timezone": "Asia/Kolkata"
+  },
+  "source": {
+    "bundlePath": "/root/kik-runs/2026-10-19/20261020T074354Z-k3eqhi/bundle-cmveqh61m08akc92wck8c339s.json",
+    "bundleSha256": "53485ee38eeb5493f90ac749af5b2d4a8e6aa6333eee9de336056236da6e96b4"
+  },
+  "editorialMode": "PRESERVE_PROVIDER",
+  "sharedNotes": {
+    "purpose": "Review and finalize proposals for ADI, Synopsis, and Calico projects.",
+    "takeaways": [
+      "Four proposals need to be sent today: two for ADI, one for Synopsis, and one for Calico.",
+      "Team structure for ADI PD proposal is pending due to personnel availability issues.",
+      "Six-member team proposed for Synopsis, focusing on lead and co-lead profiles.",
+      "Calico requires significant input, with DDR as the main priority.",
+      "No updates on DFT and emulation; both are currently on hold.",
+      "Feedback from internal interviews is pending, affecting proposal progress.",
+      "Profiles for DVPCI IP have been shared, but Infineon and Axiato have no updates.",
+      "Synopsis requires profiles with strong Ethernet and 100G+ speed experience.",
+      "Emulation profiles need Ethernet IP experience; current profiles lack this.",
+      "ERP Next tools should be used for team activities, ensuring all members have login access."
+    ],
+    "detailedSummary": [
+      {
+        "heading": "Proposal submissions",
+        "points": [
+          "Four proposals need to be sent today: two for ADI, one for Synopsis, and one for Calico.",
+          "Team structure for ADI PD proposal is pending due to personnel availability issues.",
+          "Six-member team proposed for Synopsis, focusing on lead and co-lead profiles.",
+          "Calico requires significant input, with DDR as the main priority."
+        ]
+      },
+      {
+        "heading": "Project updates",
+        "points": [
+          "No updates on DFT and emulation; both are currently on hold.",
+          "Feedback from internal interviews is pending, affecting proposal progress.",
+          "Profiles for DVPCI IP have been shared, but Infineon and Axiato have no updates.",
+          "Synopsis requires profiles with strong Ethernet and 100G+ speed experience."
+        ]
+      },
+      {
+        "heading": "Emulation profiles",
+        "points": [
+          "Emulation profiles need Ethernet IP experience; current profiles lack this.",
+          "Sudharani's profile is considered but lacks Ethernet experience.",
+          "Sharing a nine-plus profile for a three-plus requirement is not feasible budget-wise."
+        ]
+      },
+      {
+        "heading": "ERP Next tools",
+        "points": [
+          "ERP Next tools should be used for team activities, ensuring all members have login access.",
+          "Check login IDs for all team members and ensure access today."
+        ]
+      }
+    ],
+    "providerText": "## Purpose\nReview and finalize proposals for ADI, Synopsis, and Calico projects.\n## Takeaways\n- Four proposals need to be sent today: two for ADI, one for Synopsis, and one for Calico.\n- Team structure for ADI PD proposal is pending due to personnel availability issues.\n- Six-member team proposed for Synopsis, focusing on lead and co-lead profiles.\n- Calico requires significant input, with DDR as the main priority.\n- No updates on DFT and emulation; both are currently on hold.\n- Feedback from internal interviews is pending, affecting proposal progress.\n- Profiles for DVPCI IP have been shared, but Infineon and Axiato have no updates.\n- Synopsis requires profiles with strong Ethernet and 100G+ speed experience.\n- Emulation profiles need Ethernet IP experience; current profiles lack this.\n- ERP Next tools should be used for team activities, ensuring all members have login access.\n## Detailed summary\n### Proposal submissions\n- Four proposals need to be sent today: two for ADI, one for Synopsis, and one for Calico.\n- Team structure for ADI PD proposal is pending due to personnel availability issues.\n- Six-member team proposed for Synopsis, focusing on lead and co-lead profiles.\n- Calico requires significant input, with DDR as the main priority.\n### Project updates\n- No updates on DFT and emulation; both are currently on hold.\n- Feedback from internal interviews is pending, affecting proposal progress.\n- Profiles for DVPCI IP have been shared, but Infineon and Axiato have no updates.\n- Synopsis requires profiles with strong Ethernet and 100G+ speed experience.\n### Emulation profiles\n- Emulation profiles need Ethernet IP experience; current profiles lack this.\n- Sudharani's profile is considered but lacks Ethernet experience.\n- Sharing a nine-plus profile for a three-plus requirement is not feasible budget-wise.\n### ERP Next tools\n- ERP Next tools should be used for team activities, ensuring all members have login access.\n- Check login IDs for all team members and ensure access today.\n## Action items\n- **Share ADI proposal by 11 AM.**: Fakhrul\n- **Share updated proposal for emulation and PD.**: Fakhrul\n- **Check ERP Next login IDs for all team members.**: Srinivasa Gupta Cheedella\n- **Drop a message to Sameer for feedback on full-time profile.**: Srinivasa Gupta Cheedella\n- **Forward JD to Roja for vendor checks.**: Satarupa Roy"
+  },
+  "recipients": [
+    {
+      "userId": "cmu2llevn0004qh9mmwzm2gwj",
+      "name": "Fakhrul",
+      "intendedEmail": "fakhrul@siliconpatterns.com",
+      "actions": [
+        {
+          "title": "Share ADI proposal by 11 AM.",
+          "body": "Share ADI proposal by 11 AM.",
+          "ownerType": "OWNER",
+          "sourceReferences": [
+            {
+              "sourceType": "PROVIDER_SUMMARY",
+              "sourceId": "cmveqh6b508alc92wi3w30rmx",
+              "quote": "Share ADI proposal by 11 AM."
+            }
+          ]
+        },
+        {
+          "title": "Share updated proposal for emulation and PD.",
+          "body": "Share updated proposal for emulation and PD.",
+          "ownerType": "OWNER",
+          "sourceReferences": [
+            {
+              "sourceType": "PROVIDER_SUMMARY",
+              "sourceId": "cmveqh6b508alc92wi3w30rmx",
+              "quote": "Share updated proposal for emulation and PD."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "userId": "cmu2lld6k0000qh9mobea70v7",
+      "name": "Srinivas",
+      "intendedEmail": "srini@siliconpatterns.com",
+      "actions": [
+        {
+          "title": "Check ERP Next login IDs for all team members.",
+          "body": "Check ERP Next login IDs for all team members.",
+          "ownerType": "OWNER",
+          "sourceReferences": [
+            {
+              "sourceType": "PROVIDER_SUMMARY",
+              "sourceId": "cmveqh6b508alc92wi3w30rmx",
+              "quote": "Check ERP Next login IDs for all team members."
+            }
+          ]
+        },
+        {
+          "title": "Drop a message to Sameer for feedback on full-time profile.",
+          "body": "Drop a message to Sameer for feedback on full-time profile.",
+          "ownerType": "OWNER",
+          "sourceReferences": [
+            {
+              "sourceType": "PROVIDER_SUMMARY",
+              "sourceId": "cmveqh6b508alc92wi3w30rmx",
+              "quote": "Drop a message to Sameer for feedback on full-time profile."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "userId": "cmu2llf990005qh9mqglyoss2",
+      "name": "Satarupa Roy",
+      "intendedEmail": "satarupa.roy@siliconpatterns.com",
+      "actions": [
+        {
+          "title": "Forward JD to Roja for vendor checks.",
+          "body": "Forward JD to Roja for vendor checks.",
+          "ownerType": "OWNER",
+          "sourceReferences": [
+            {
+              "sourceType": "PROVIDER_SUMMARY",
+              "sourceId": "cmveqh6b508alc92wi3w30rmx",
+              "quote": "Forward JD to Roja for vendor checks."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "userId": "cmu2llgx6000aqh9m22y7wx1h",
+      "name": "Arun",
+      "intendedEmail": "arunk@siliconpatterns.com",
+      "actions": []
+    },
+    {
+      "userId": "cmu2llglh0009qh9m040i5scw",
+      "name": "Roja Reddy",
+      "intendedEmail": "roja.reddy@siliconpatterns.com",
+      "actions": [
+        {
+          "title": "Forward JD to Roja for vendor checks.",
+          "body": "Related item from the meeting summary.",
+          "ownerType": "MENTIONED_RECIPIENT",
+          "ownerName": "Satarupa Roy",
+          "sourceReferences": [
+            {
+              "sourceType": "PROVIDER_SUMMARY",
+              "sourceId": "cmveqh6b508alc92wi3w30rmx",
+              "quote": "Forward JD to Roja for vendor checks."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "templateVersion": "kik-py-2",
+  "applicationUrl": "https://delivery-desk-frontend.vercel.app"
+}

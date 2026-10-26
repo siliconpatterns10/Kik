@@ -1,0 +1,23 @@
+# Runtime config may contain local paths; never commit it.
+config.toml
+
+# Generated artifacts must never be committed, even if the runs directory is
+# misconfigured to point inside this tree.
+runs/
+*.preview.html
+*.preview.txt
+*.bundle.json
+*.email-plan.json
+*.ledger.jsonl
+
+# Credentials
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+# kik-runs artifacts (belt-and-suspenders)
+kik-runs/

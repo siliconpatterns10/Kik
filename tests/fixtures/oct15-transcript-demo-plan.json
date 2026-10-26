@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "meeting": {
+    "id": "cmv9c9xz4004tl5r5ovohsicz",
+    "title": "Daily Leadership connect — transcript demonstration",
+    "date": "2026-10-15",
+    "timezone": "Asia/Kolkata"
+  },
+  "source": {
+    "bundlePath": "/root/kik-runs/2026-10-15/20261020T072646Z-khuy1d/bundle-cmv9c9xz4004tl5r5ovohsicz.json",
+    "bundleSha256": "0f07ff95e759eac88637009543934d4f418622b3fdcde9ded799fe63b1df50ec"
+  },
+  "editorialMode": "AGENT_AUTHORED",
+  "sharedNotes": {
+    "purpose": "Offline citation verification demonstration. Transcript was manually downloaded/formatted by the user; this is not evidence of automatic transcript ingestion.",
+    "takeaways": [
+      "Citation resolution is checked against the cited transcript source only."
+    ],
+    "detailedSummary": [
+      {
+        "heading": "Provenance",
+        "points": [
+          "Manual transcript download/formatting; not evidence of automatic transcript ingestion."
+        ]
+      }
+    ]
+  },
+  "recipients": [
+    {
+      "userId": "cmu2llevn0004qh9mmwzm2gwj",
+      "name": "Fakhrul",
+      "intendedEmail": "fakhrul@siliconpatterns.com",
+      "actions": [
+        {
+          "title": "Synthetic demonstration citation check",
+          "body": "This is an offline evidence-path demonstration only.",
+          "ownerType": "OWNER",
+          "sourceReferences": [
+            {
+              "sourceType": "TRANSCRIPT_SEGMENT",
+              "sourceId": "cmv9ca0fu004vl5r51wod9skx",
+              "quote": "We can start with our action items. Right till the time."
+            },
+            {
+              "sourceType": "TRANSCRIPT_FULL_TEXT",
+              "sourceId": "cmv9c9zc7004ul5r5wsjy3tuf",
+              "quote": "[00:00:01] Prudviteja: We can start with our "
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "templateVersion": "kik-py-1",
+  "applicationUrl": "https://delivery-desk-frontend.vercel.app"
+}

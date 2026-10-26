@@ -1,0 +1,1 @@
+{"meeting":{"id":"synthetic"},"completeness":{"complete":true,"notes":[]},"identities":{"attendees":[{"user":{"userId":"u","email":"u@example.com","isActive":true}}]},"summaries":{"items":[]},"storedActionItems":{"items":[]},"transcript":{"id":"t","fullText":"Synthetic full-text quote.","segments":[{"id":"seg-1","sequence":1,"text":"Synthetic segment quote."}]}}

@@ -1,0 +1,41 @@
+# Kik toolkit configuration - non-secret.
+#
+# Copy to /root/Kik/config.toml and edit. The real config is not committed.
+# Never put a credential in this file; credentials live in the env file.
+
+env_file = "/root/.env"
+timezone = "Asia/Kolkata"
+
+# Artifacts (bundles, previews, ledgers) are written here.
+# Keep this OUTSIDE any git clone: meeting content must not be committable.
+runs_directory = "/root/kik-runs"
+
+[supabase]
+# Informational only. The URL is read from SUPABASE_URL in the env file when
+# present; this ref is used only as a fallback origin.
+project_ref = "drjemkxkmkfwjxfiqjum"
+
+[render]
+# Verified 2026-10-20 against GET /v1/owners and /v1/services.
+owner_id = "tea-dakgcrp594qs73e02bbg"
+service_id = "srv-dakksvfqj5pc73bi5j3g"
+
+[mail]
+sender = "vlsi_delivery@siliconpatterns.com"
+# Mandatory initial restriction: live mail goes only to test_recipient.
+test_only = true
+test_recipient = "yaswanth.ampolu@siliconpatterns.com"
+
+# Which env variables hold the Graph app-only credentials. Explicit, so the
+# toolkit never probes several candidates and silently accepts a wrong one.
+# CLIENT_SECRET is the verified working name; CLIENT_SECRET_VALUE returned
+# AADSTS7000215 and is deliberately not listed here.
+secret_env_name = "CLIENT_SECRET"
+tenant_env_name = "DIRECTORY_TENANT_ID"
+client_id_env_name = "APPLICATION_CLIENT_ID"
+
+[app]
+# Verified 2026-10-20 from the Render service environment. This is the
+# frontend origin used for the "Open Delivery Desk" button. If it is ever
+# unavailable, the renderer omits the button rather than guessing a link.
+frontend_url = "https://delivery-desk-frontend.vercel.app"

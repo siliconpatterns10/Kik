@@ -1,0 +1,19 @@
+{
+  "//": "Fingerprint registry for fixture classification. Two independent fields, because the two hash types are different computations and the provenance of the second is NOT established.",
+  "//rawTextSha256": "sha256 over the exact meeting_transcripts.fullText bytes (UTF-8), as computed locally by the toolkit. Reproducible by anyone holding the text.",
+  "//storedContentHash": "The meeting_transcripts.contentHash column value as stored by the application. Its normalization algorithm and provenance are NOT established by the toolkit; it is recorded by observation only. Do not describe it as provider-versioned.",
+  "//matchRule": "A record matching either list is labelled a KNOWN FIXTURE by fingerprint. A record matching neither is UNKNOWN - not 'verified real'. Title alone never changes a classification. Excluding fixtures requires --exclude-fixtures.",
+  "registryVersion": 1,
+  "observedAt": "2026-10-20",
+  "rawTextSha256": [
+    "a8d7e353c8a57f8963c75778f7bb7a1d6db6324779e1e4238cef46101a632653"
+  ],
+  "storedContentHash": [
+    "484403475a037d3b2f142034a4012c734f5117d855665f68a90c361ec148c359"
+  ],
+  "notes": [
+    "The rawTextSha256 entry above is a 443-character webhook-setup transcript observed on three separate meeting records (2026-09-22, 2026-10-13 x2). It is short, repetitive test content.",
+    "The storedContentHash entry above is the contentHash stored on those same records.",
+    "sha256 over whitespace-collapsed text of the same document is a third, distinct value and is deliberately not registered: collapsing whitespace is not a normalization this toolkit applies to source text."
+  ]
+}
