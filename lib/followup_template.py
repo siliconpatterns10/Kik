@@ -1,0 +1,19 @@
+"""Offline status-request template. Agent supplies content; no extraction or sending."""
+import html,re
+
+def render(plan, person):
+ esc=lambda x:html.escape(str(x),quote=True)
+ follow=plan['followUp'];items=person.get('actions',[])
+ if not items:raise ValueError('follow-up requires original actions')
+ day=follow['date'];meeting=plan['meeting']['title']
+ title="Today's action-item update"
+ subject='Status update requested: '+re.sub(r'[\r\n\x00-\x1f]+',' ',meeting)+' — '+day
+ intro=follow['introduction'];cards='';plain=[]
+ for i,a in enumerate(items,1):
+  prompt=a.get('updatePrompt') or plan.get('followUp',{}).get('updatePrompt') or 'Any update on this item today?'
+  cards+=f'''<tr><td style="padding:0 0 16px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e4e4de;border-radius:12px"><tr><td style="padding:20px"><p style="margin:0 0 8px;color:#5b6070;font:12px Arial,sans-serif">ITEM {i} · PREVIOUSLY SHARED</p><h2 style="margin:0 0 10px;font:700 18px/25px Arial,sans-serif">{esc(a['title'])}</h2><p style="margin:0 0 14px;color:#5b6070;font:14px/22px Arial,sans-serif">{esc(a['body'])}</p><p style="margin:0 0 14px;font:15px/24px Arial,sans-serif">{esc(prompt)}</p></td></tr></table></td></tr>'''
+  plain.append(f"{i}. {a['title']}\nOriginally shared: {a['body']}\n{prompt}")
+ notice=follow.get('testNotice','')
+ doc=f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>@media only screen and (max-width:480px){{.pad{{padding-left:20px!important;padding-right:20px!important}}}}</style></head><body bgcolor="#f1f1ec" style="margin:0;background:#f1f1ec;color:#14151a"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:28px 12px"><!--[if mso]><table role="presentation" width="620"><tr><td><![endif]--><table role="presentation" width="100%" bgcolor="#fafaf7" cellpadding="0" cellspacing="0" style="max-width:620px;border:1px solid #e4e4de;border-radius:16px"><tr><td class="pad" style="padding:22px 30px;border-bottom:1px solid #e4e4de;font:700 17px Arial,sans-serif">Delivery Desk <span style="color:#5b6070;font:11px Arial,sans-serif"> · STATUS CHECK-IN</span></td></tr><tr><td class="pad" style="padding:26px 30px 20px"><p style="font:14px Arial,sans-serif">Hello {esc(person['name'])},</p><h1 style="font:700 28px/34px Arial,sans-serif;margin:12px 0">{title}</h1><p style="font:14px/22px Arial,sans-serif;color:#5b6070">{esc(meeting)} · {esc(day)}</p><p style="font:15px/24px Arial,sans-serif">{esc(intro)}</p>{('<p style="padding:12px;background:#f1f7df;font:13px/20px Arial,sans-serif">'+esc(notice)+'</p>') if notice else ''}</td></tr><tr><td class="pad" style="padding:0 30px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{cards}</table></td></tr><tr><td class="pad" style="padding:4px 30px 28px"><p style="font:15px/24px Arial,sans-serif"><strong>Reply in your own words with any updates.</strong><br>If already completed, share the outcome. If ownership or scope is incorrect, please correct it. This is a status request, not a new assignment or a claim that an item is overdue.</p><a href="{esc(plan['applicationUrl'])}" style="display:inline-block;padding:12px 20px;background:#c6f24e;border-radius:24px;color:#14151a;text-decoration:none;font:600 14px Arial,sans-serif">Open Delivery Desk</a></td></tr></table><!--[if mso]></td></tr></table><![endif]--><p style="color:#5b6070;font:12px Arial,sans-serif">Delivery Desk · Silicon Patterns</p></td></tr></table></body></html>'''
+ text='Hello '+person['name']+',\n\n'+title+'\n'+meeting+' · '+day+'\n\n'+intro+'\n'+notice+'\n\n'+'\n\n'.join(plain)+'\n\nReply in your own words with any updates. If completed, share the outcome. Correct ownership or scope if needed.\nOpen Delivery Desk: '+plan['applicationUrl']
+ return {'subject':subject,'html':doc,'text':text}

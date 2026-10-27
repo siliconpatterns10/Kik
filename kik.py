@@ -39,6 +39,7 @@ from lib import webhook_command as webhook_mod  # noqa: E402
 from lib import phase2 as phase2_mod  # noqa: E402
 from lib import send_review as send_mod  # noqa: E402
 from lib import deliver as deliver_mod  # noqa: E402
+from lib import followup_send as followup_mod  # noqa: E402
 import json as json_mod  # noqa: E402
 
 PROGRAM = "kik.py"
@@ -307,6 +308,31 @@ def build_parser() -> argparse.ArgumentParser:
     deliver_cmd.add_argument("--execute", action="store_true", help="submit; omitted means dry run")
     deliver_cmd.add_argument("--history", action="store_true", help="print the shared delivery ledger")
 
+    follow_cmd = subparsers.add_parser(
+        "followup-send",
+        help="send status follow-ups to owners of action emails delivered on a local day",
+        description=(
+            "Ledger-driven follow-up delivery. Finds the action-item emails that "
+            "were accepted on the requested local day, rebuilds each owner's "
+            "follow-up from the delivered plan and the stored follow-up "
+            "template, and submits one status request per owner. Dry run unless "
+            "--execute is given. Never retries, never duplicates, and stops the "
+            "batch on any non-accepted outcome."
+        ),
+    )
+    follow_cmd.add_argument("--date", required=True,
+                            help="local calendar day whose delivered action emails are followed up, YYYY-MM-DD")
+    follow_cmd.add_argument("--timezone", default=None,
+                            help="IANA timezone used for the day boundary (default: config timezone)")
+    follow_cmd.add_argument("--introduction", default=None,
+                            help="opening paragraph for the follow-up; a neutral default is used if omitted")
+    follow_cmd.add_argument("--only", default=None,
+                            help="restrict the run to one owner address (used for test flows)")
+    follow_cmd.add_argument("--test-recipient", action="store_true",
+                            help="submit every follow-up to the configured test recipient instead of the owner")
+    follow_cmd.add_argument("--execute", action="store_true", help="submit; omitted means dry run")
+    follow_cmd.add_argument("--history", action="store_true", help="print the shared delivery ledger")
+
     runs_cmd = subparsers.add_parser(
         "runs", help="list artifact runs so saved evidence can be reused"
     )
@@ -381,7 +407,7 @@ def main(argv: list[str] | None = None) -> int:
                 return output_mod.emit_result(output, status_mod.Result(command="render", status=status_mod.CONTENT_UNAVAILABLE, data=checked))
             cfg_path = resolve_config_path(args.config)
             cfg = config_mod.load_config(cfg_path)
-            directory, checked = phase2_mod.render_run(plan, cfg.runs_directory, bundle)
+            directory, checked = phase2_mod.render_run(plan, cfg.runs_directory, bundle, plan_path_hint=str(plan_path))
             return output_mod.emit_result(output, status_mod.Result(command="render", status=status_mod.OK, data={"previewDirectory":directory,"validation":checked}))
         except (OSError, ValueError, KeyError, TypeError, config_mod.ConfigError) as exc:
             return output_mod.emit_result(output, status_mod.Result(command=command, status=status_mod.USAGE_ERROR, findings=[status_mod.Finding("plan",False,str(exc))]))
@@ -390,6 +416,37 @@ def main(argv: list[str] | None = None) -> int:
         cfg, failure = load_config_or_report(output, args.config)
         if cfg is None: return failure or 1
         return output_mod.emit_result(output, _runs(cfg, date=args.date, command_filter=getattr(args, "command", None)))
+
+    if command == "followup-send":
+        try:
+            cfg_path = resolve_config_path(args.config)
+            cfg = config_mod.load_config(cfg_path)
+            if args.history:
+                if args.execute:
+                    raise followup_mod.FollowUpError("--history cannot be combined with --execute")
+                ledger = send_mod.Ledger(cfg.runs_directory)
+                return output_mod.emit_result(output, status_mod.Result(
+                    command=command, status=status_mod.OK, data={"history": send_mod.history(ledger)}))
+            if args.test_recipient and args.execute and args.only:
+                raise followup_mod.FollowUpError(
+                    "--test-recipient and --only cannot be combined when executing")
+            local_date = args.date
+            config_mod.attach_env(cfg)
+            result = followup_mod.run(
+                cfg,
+                local_date=local_date,
+                introduction=args.introduction,
+                execute=bool(args.execute),
+                dry_run=not args.execute,
+                only=args.only,
+                test_recipient=bool(args.test_recipient),
+            )
+            return output_mod.emit_result(output, status_mod.Result(
+                command=command, status=status_mod.OK, data=result))
+        except Exception as exc:
+            return output_mod.emit_result(output, status_mod.Result(
+                command=command, status=status_mod.USAGE_ERROR,
+                findings=[status_mod.Finding("followup-send", False, str(exc))]))
 
     if command == "deliver-attendees":
         try:

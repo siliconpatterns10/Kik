@@ -55,7 +55,7 @@ def _source_matches(b,ref):
  return bool(rows and q in str(rows[0].get('title' if typ=='STORED_ACTION_ITEM' else 'text') or ''))
 def validate(plan,bundle=None):
  errors=[];warnings=[]
- if plan.get('emailType','COMBINED') not in ('SUMMARY','ACTIONS','COMBINED'):errors.append('unsupported emailType')
+ if plan.get('emailType','COMBINED') not in ('SUMMARY','ACTIONS','COMBINED','FOLLOW_UP'):errors.append('unsupported emailType')
  for k in ('schemaVersion','meeting','source','editorialMode','sharedNotes','recipients','templateVersion','applicationUrl'):
   if k not in plan:errors.append('missing required field: '+k)
  if plan.get('schemaVersion')!=1:errors.append('unsupported schemaVersion')
@@ -68,6 +68,8 @@ def validate(plan,bundle=None):
  sh=plan.get('sharedNotes',{})
  for k in ('purpose','takeaways','detailedSummary'):
   if k not in sh:errors.append('missing sharedNotes.'+k)
+ for key in ('decisionsAndPriorities','blockersAndHelp'):
+  if key in sh and (not isinstance(sh[key],list) or any(not isinstance(v,str) or not v.strip() for v in sh[key])):errors.append('sharedNotes.'+key+' must be a list of non-empty strings')
  users={}
  if bundle:
   for sec in ('attendees','speakers','summary'):
@@ -113,6 +115,9 @@ def validate(plan,bundle=None):
      if sh.get(key)!=extracted[key]:errors.append('PRESERVE_PROVIDER sharedNotes.'+key+' differs from deterministically extracted provider section')
  return {'valid':not errors,'errors':errors,'warnings':warnings,'ownershipAndQualityCertified':False}
 def render_one(plan,r):
+ if plan.get('emailType')=='FOLLOW_UP':
+  from .followup_template import render
+  return render(plan,r)
  sh=plan['sharedNotes'];title=plan['meeting']['title'];actions=r.get('actions',[]) or [];owned=[a for a in actions if a.get('ownerType')=='OWNER'];mentioned=[a for a in actions if a.get('ownerType')=='MENTIONED_RECIPIENT']
  email_type=plan.get('emailType','COMBINED')
  if email_type not in ('COMBINED','SUMMARY','ACTIONS'): raise PlanError('unsupported emailType')
@@ -127,6 +132,18 @@ def render_one(plan,r):
  if det:sections+=''.join('<div style="margin:0 0 16px">'+('<h3 style="margin:0 0 6px;color:#14151a;font:700 16px/23px Arial,sans-serif">'+_esc(x.get('heading',''))+'</h3>' if x.get('heading') else '')+('<ul style="margin:0;padding:0 0 0 20px;color:#333744;font:15px/24px Arial,sans-serif">'+''.join('<li style="padding:0 0 5px 2px">'+_esc(y)+'</li>' for y in x.get('points',[]))+'</ul>')+'</div>' for x in det)
  else:sections+='<p style="margin:0;color:#5b6070;font:15px/23px Arial,sans-serif">No detailed summary was included in the saved meeting notes.</p>'
  sections+='</td></tr>'
+ # Optional agent-authored sections; absent fields preserve existing output.
+ extra_text='';extra_html=''
+ if plan.get('editorialMode')=='AGENT_AUTHORED':
+  for key,label in (('decisionsAndPriorities','Decisions and priorities'),('blockersAndHelp','Blockers / help needed')):
+   items=sh.get(key,[])
+   if items:
+    extra_text+='\n\n'+label+'\n'+'\n'.join('• '+str(v) for v in items)
+    extra_html+='<tr><td class="dd-email-pad" style="padding:0 30px 23px"><h2 style="margin:0 0 9px;color:#14151a;font:700 20px/27px Arial,sans-serif">'+_esc(label)+'</h2>'+list_html(items)+'</td></tr>'
+ if extra_text:
+  summary_text=summary_text.replace('\n\nDetailed summary\n',extra_text+'\n\nDetailed summary\n',1)
+  marker='<tr><td class="dd-email-pad" style="padding:0 30px 23px"><h2 style="margin:0 0 9px;color:#14151a;font:700 20px/27px Arial,sans-serif">Detailed summary</h2>'
+  sections=sections.replace(marker,extra_html+marker,1)
  task_rows=''
  if owned:
   for i,a in enumerate(owned):
@@ -155,7 +172,7 @@ def render_one(plan,r):
   related_text='\n'.join('Related item — owned by '+str(a.get('ownerName') or a.get('assignedTo') or 'another meeting participant')+': '+str(a.get('title','')) for a in mentioned) if mentioned else 'None'
   text='Hello '+r.get('name','there')+',\n\nMeeting notes\n'+title+(' · '+pretty_date if pretty_date else '')+'\n\n'+summary_text+'\n\nAction items\n'+action_text+'\n\nRelated items\n'+related_text+'\n\nOpen Delivery Desk: '+plan['applicationUrl']
  return {'subject':subject,'text':text,'html':html_doc}
-def render_run(plan,root,bundle=None):
+def render_run(plan,root,bundle=None,plan_path_hint=None):
  result=validate(plan,bundle)
  if not result['valid']:raise PlanError('; '.join(result['errors']))
  run=runstore.new_run(Path(root),command='render',local_date=plan['meeting']['date']);rows=[]
@@ -164,4 +181,5 @@ def render_run(plan,root,bundle=None):
   run.write_text(stem+'.html',out['html'],note='offline local preview');run.write_text(stem+'.txt',out['text'],note='offline plain text');row['htmlSha256']=_filehash(run.directory/row['htmlFile']);row['textSha256']=_filehash(run.directory/row['textFile']);rows.append(row)
  entries=[dict(r) for r in rows];binding={'result':result,'source':plan.get('source',{}),'meeting':plan.get('meeting',{}),'editorialMode':plan.get('editorialMode')};vh=hashlib.sha256(json.dumps(binding,sort_keys=True,separators=(',',':')).encode()).hexdigest()
  run.write_text('index.html','<!doctype html><meta charset="utf-8"><title>Local previews</title><h1>Local previews only — no email sent</h1>'+''.join(f'<p><a href="{x["htmlFile"]}">{_esc(x["name"])} HTML</a> | <a href="{x["textFile"]}">Plain text</a></p>' for x in entries),note='local index')
- run.write_json('preview-manifest.json',{'schemaVersion':1,'runId':run.run_id,'templateVersion':TEMPLATE_VERSION,'meeting':plan['meeting'],'editorialMode':plan.get('editorialMode'),'deliveryMode':'TEST_REVIEW','validationBinding':binding,'validationSha256':vh,'recipients':entries,'validation':result,'sendPerformed':False},note='recipient/content manifest');run.manifest.sources=plan.get('source',{});run.manifest.completeness={'complete':True};run.seal();return str(run.directory),result
+ run.write_json('preview-manifest.json',{'schemaVersion':1,'runId':run.run_id,'templateVersion':TEMPLATE_VERSION,'meeting':plan['meeting'],'editorialMode':plan.get('editorialMode'),'deliveryMode':'TEST_REVIEW','validationBinding':binding,'validationSha256':vh,'recipients':entries,'validation':result,'sendPerformed':False},note='recipient/content manifest');run.manifest.sources=dict(plan.get('source',{}),planPath=str(Path(plan_path_hint).expanduser()) if plan_path_hint else None,emailType=plan.get('emailType','COMBINED'))
+ run.manifest.sources={k:v for k,v in run.manifest.sources.items() if v};run.manifest.completeness={'complete':True};run.seal();return str(run.directory),result

@@ -41,3 +41,15 @@ def test_transcript_batch_replay_and_changed_content():
  try:batchplan.plan_from_manifest(b,m)
  except transcripts.BatchError:return
  assert False
+
+def test_optional_leadership_sections_order_and_escape():
+ p=plan();p['emailType']='SUMMARY'
+ for key in ('decisionsAndPriorities','blockersAndHelp'):p['sharedNotes'][key]=['Evidence <safe>']
+ assert validate(p)['valid'];out=render_one(p,p['recipients'][0])
+ for fmt in ('html','text'):
+  assert out[fmt].index('Takeaways') < out[fmt].index('Decisions and priorities') < out[fmt].index('Blockers / help needed') < out[fmt].index('Detailed summary')
+ assert 'Evidence &lt;safe&gt;' in out['html']
+ p['emailType']='ACTIONS';out=render_one(p,p['recipients'][0]);assert 'Progress since yesterday' not in out['html'] and 'Progress since yesterday' not in out['text']
+
+def test_optional_leadership_sections_reject_invalid_type():
+ p=plan();p['sharedNotes']['blockersAndHelp']='not a list';assert not validate(p)['valid']

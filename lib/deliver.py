@@ -408,6 +408,29 @@ def deliver(items, cfg, ledger, manifest_path: str, plan_path: str, bundle_path:
         lock.close()
 
 
+def _mailbox_sent_rows(cfg, start, end) -> list[dict]:
+    """Read Sent Items for a UTC window through Graph. Read-only; sends nothing."""
+    import urllib.request
+    token = _graph_token(cfg)
+    query = urllib.parse.urlencode({
+        "$filter": ("sentDateTime ge " + start.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    + " and sentDateTime lt " + end.strftime("%Y-%m-%dT%H:%M:%SZ")),
+        "$select": "subject,sentDateTime,toRecipients,conversationId",
+        "$top": "100",
+    })
+    url = ("https://graph.microsoft.com/v1.0/users/"
+           + urllib.parse.quote(cfg.mail.sender, safe="")
+           + "/mailFolders/sentitems/messages?" + query)
+    rows: list[dict] = []
+    while url:
+        request = urllib.request.Request(url, headers={"Authorization": "Bearer " + token})
+        with urllib.request.urlopen(request, timeout=40) as response:
+            payload = json.load(response)
+        rows.extend(payload.get("value") or [])
+        url = payload.get("@odata.nextLink")
+    return rows
+
+
 def _sender_for(cfg) -> str:
     return cfg.mail.sender
 
